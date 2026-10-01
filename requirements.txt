@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+pydantic==1.10.13
+python-multipart
+jinja2
+reportlab
+xlsxwriter
