@@ -1,0 +1,14 @@
+# Virtual environments (never commit these - they are thousands of files)
+.venv/
+.venv311/
+venv/
+
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local development database and secrets
+dev.db
+*.db
+.env
