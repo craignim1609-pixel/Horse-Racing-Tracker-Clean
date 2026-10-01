@@ -1,6 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date
+import re
+
+from app.services.predictor import normalise_odds
 
 
 # -----------------------------
@@ -167,3 +170,91 @@ class AccaHistoryOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+# -----------------------------
+# PREDICTOR
+# -----------------------------
+_TIME = re.compile(r"^([01]\d|2[0-3]):[0-5]\d$")
+
+
+def _blank_to_none(v):
+    """Trim text; an empty box becomes None."""
+    if isinstance(v, str):
+        v = re.sub(r"\s+", " ", v.strip())
+        return v or None
+    return v
+
+
+class PredictorRaceCreate(BaseModel):
+    race_date: date
+    course: Optional[str] = None        # required - checked below so a blank box gets a clear message
+    race_time: Optional[str] = None     # required - checked below
+    name: Optional[str] = None
+    distance: Optional[str] = None
+
+    _clean = validator("course", "race_time", "name", "distance", pre=True, allow_reuse=True)(_blank_to_none)
+
+    @validator("course", always=True)
+    def course_required(cls, v):
+        if not v:
+            raise ValueError("Course is required")
+        return v
+
+    @validator("race_time", always=True)
+    def time_format(cls, v):
+        if not v or not _TIME.match(v):
+            raise ValueError("Time must look like 14:05")
+        return v
+
+
+class PredictorRunnerUpdate(BaseModel):
+    horse_name: Optional[str] = None
+    form: Optional[str] = None
+    jockey: Optional[str] = None
+    trainer: Optional[str] = None
+    sky_odds: Optional[str] = None
+
+    _clean = validator("horse_name", "form", "jockey", "trainer", "sky_odds", pre=True, allow_reuse=True)(_blank_to_none)
+
+    @validator("sky_odds")
+    def odds_format(cls, v):
+        return normalise_odds(v)
+
+
+class PredictorRunnerCreate(PredictorRunnerUpdate):
+    @validator("horse_name", always=True)
+    def horse_required(cls, v):
+        if not v:
+            raise ValueError("Horse name is required")
+        return v
+
+
+class ConnectionStatIn(BaseModel):
+    kind: str
+    jockey: Optional[str] = None
+    trainer: Optional[str] = None
+    runs: int
+    wins: int
+
+    _clean = validator("jockey", "trainer", pre=True, allow_reuse=True)(_blank_to_none)
+
+    @validator("kind")
+    def kind_valid(cls, v):
+        if v not in ("jockey", "trainer", "combo"):
+            raise ValueError("Type must be jockey, trainer or combo")
+        return v
+
+    @validator("runs")
+    def runs_positive(cls, v):
+        if v < 1:
+            raise ValueError("Runs must be at least 1")
+        return v
+
+    @validator("wins")
+    def wins_valid(cls, v, values):
+        if v < 0:
+            raise ValueError("Wins can't be negative")
+        if "runs" in values and v > values["runs"]:
+            raise ValueError("Wins can't be more than runs")
+        return v

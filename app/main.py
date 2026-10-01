@@ -9,7 +9,7 @@ from app.database import Base, engine, get_db
 from app import models
 
 # Routers
-from app.routers import picks, accumulator, raceday, players, stats
+from app.routers import picks, accumulator, raceday, players, stats, predictor
 from app.startup import seed_players
 
 
@@ -38,6 +38,7 @@ app.include_router(accumulator.router)
 app.include_router(raceday.router)
 app.include_router(players.router)
 app.include_router(stats.router)
+app.include_router(predictor.router)
 
 
 # -----------------------------------------
@@ -87,5 +88,15 @@ def acca_page(request: Request):
         "request": request,
         "active": "accumulator",
         "added": added
+    })
+
+
+# RACE PREDICTOR PAGE
+@app.get("/predictor", response_class=HTMLResponse)
+def predictor_page(request: Request):
+    return templates.TemplateResponse("predictor.html", {
+        "request": request,
+        "active": "predictor",
+        "title": "Race Predictor"
     })
 

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="page-title">Race Predictor</h1>
+<p class="pred-note">
+    Pick a day, course and race, then enter the runners and Sky Bet odds.
+    The page works out each horse's chance (with the bookmaker's margin removed)
+    and shows jockey, trainer and combo win records.
+</p>
+
+<div id="predMsg" class="pred-msg hidden" role="status"></div>
+
+<!-- ============ PICKERS ============ -->
+<div class="performance-center-box">
+    <div class="pred-controls">
+        <div class="pred-field">
+            <label for="predDate">Date</label>
+            <input type="date" id="predDate">
+        </div>
+        <div class="pred-field">
+            <label for="predCourse">Course</label>
+            <select id="predCourse"></select>
+        </div>
+        <div class="pred-field">
+            <label for="predRace">Race</label>
+            <select id="predRace"></select>
+        </div>
+    </div>
+</div>
+
+<!-- ============ ADD A RACE ============ -->
+<details class="pred-panel" id="addRacePanel">
+    <summary>+ Add a race for this day</summary>
+    <form id="addRaceForm" class="pred-form">
+        <div class="pred-field">
+            <label for="newCourse">Course</label>
+            <input id="newCourse" list="courseList" placeholder="e.g. Newcastle" required autocomplete="off">
+            <datalist id="courseList"></datalist>
+        </div>
+        <div class="pred-field">
+            <label for="newTime">Time</label>
+            <input id="newTime" type="time" required>
+        </div>
+        <div class="pred-field pred-grow">
+            <label for="newName">Race name (optional)</label>
+            <input id="newName" placeholder="e.g. Nursery Handicap">
+        </div>
+        <div class="pred-field">
+            <label for="newDistance">Distance (optional)</label>
+            <input id="newDistance" placeholder="e.g. 5f">
+        </div>
+        <button type="submit" class="submit-btn">Add race</button>
+    </form>
+</details>
+
+<!-- ============ RACE ============ -->
+<div id="raceEmpty" class="pred-empty">No races added for this day yet. Use "Add a race" above.</div>
+
+<section id="racePanel" class="performance-center-box hidden">
+    <div class="pred-race-head">
+        <div>
+            <h2 id="raceTitle" class="pred-race-title"></h2>
+            <div id="raceSub" class="pred-race-sub"></div>
+        </div>
+        <button type="button" id="deleteRaceBtn" class="pred-danger">Delete race</button>
+    </div>
+
+    <div id="raceSummary" class="pred-summary"></div>
+
+    <div class="pred-table-wrap">
+        <table class="pred-table">
+            <thead>
+                <tr>
+                    <th>Horse</th>
+                    <th>Form</th>
+                    <th>Jockey</th>
+                    <th>Trainer</th>
+                    <th>Sky Bet</th>
+                    <th>Chance</th>
+                    <th>Jockey wins</th>
+                    <th>Trainer wins</th>
+                    <th>Jockey + trainer</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="runnerRows"></tbody>
+        </table>
+    </div>
+
+    <form id="addRunnerForm" class="pred-form pred-runner-form">
+        <div class="pred-field pred-grow">
+            <label for="rHorse">Horse</label>
+            <input id="rHorse" required autocomplete="off">
+        </div>
+        <div class="pred-field">
+            <label for="rForm">Form</label>
+            <input id="rForm" placeholder="e.g. 1223" autocomplete="off">
+        </div>
+        <div class="pred-field">
+            <label for="rJockey">Jockey</label>
+            <input id="rJockey" autocomplete="off">
+        </div>
+        <div class="pred-field">
+            <label for="rTrainer">Trainer</label>
+            <input id="rTrainer" autocomplete="off">
+        </div>
+        <div class="pred-field pred-narrow">
+            <label for="rOdds">Sky Bet odds</label>
+            <input id="rOdds" placeholder="e.g. 5/2" autocomplete="off">
+        </div>
+        <button type="submit" class="submit-btn">Add runner</button>
+    </form>
+</section>
+
+<!-- ============ JOCKEY / TRAINER RECORDS ============ -->
+<details class="pred-panel" id="statsPanel">
+    <summary>Jockey &amp; trainer win records</summary>
+    <p class="pred-help">
+        Enter a record once and it is used for every race. Use the same spelling as the racecard.
+        A jockey + trainer pairing is flagged <strong>Formidable</strong> only with at least
+        <span id="minRuns">20</span> runs together and a strike rate of
+        <span id="minRate">25</span>% or better &mdash; small samples are just luck.
+    </p>
+    <form id="statForm" class="pred-form">
+        <div class="pred-field">
+            <label for="sKind">Type</label>
+            <select id="sKind">
+                <option value="jockey">Jockey</option>
+                <option value="trainer">Trainer</option>
+                <option value="combo">Jockey + trainer</option>
+            </select>
+        </div>
+        <div class="pred-field" id="sJockeyWrap">
+            <label for="sJockey">Jockey</label>
+            <input id="sJockey" autocomplete="off">
+        </div>
+        <div class="pred-field hidden" id="sTrainerWrap">
+            <label for="sTrainer">Trainer</label>
+            <input id="sTrainer" autocomplete="off">
+        </div>
+        <div class="pred-field pred-narrow">
+            <label for="sRuns">Runs</label>
+            <input id="sRuns" type="number" min="1" required>
+        </div>
+        <div class="pred-field pred-narrow">
+            <label for="sWins">Wins</label>
+            <input id="sWins" type="number" min="0" required>
+        </div>
+        <button type="submit" class="submit-btn">Save record</button>
+    </form>
+
+    <div class="pred-table-wrap">
+        <table class="pred-table pred-stats-table">
+            <thead>
+                <tr><th>Type</th><th>Jockey</th><th>Trainer</th><th>Runs</th><th>Wins</th><th>Strike rate</th><th></th></tr>
+            </thead>
+            <tbody id="statRows"></tbody>
+        </table>
+    </div>
+</details>
+
+<script src="/static/predictor.js?v=2"></script>
+
+{% endblock %}

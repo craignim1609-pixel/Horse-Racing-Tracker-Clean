@@ -115,8 +115,9 @@ h2 {
 
 .nav-bar {
     display: flex;
+    flex-wrap: wrap;            /* six links: let the menu wrap on phones */
     justify-content: center;
-    gap: 28px;
+    gap: 10px 28px;
     margin: 10px 0 25px 0;
     padding-bottom: 6px;
     border-bottom: 2px solid rgba(247,198,0,0.25);
@@ -1295,6 +1296,273 @@ button:active,
 
     .acca-card {
         padding: 12px;
+    }
+
+    .nav-bar {
+        gap: 8px 18px;
+    }
+}
+
+/* ========================================= */
+/* RACE PREDICTOR                            */
+/* ========================================= */
+
+.pred-note {
+    max-width: 760px;
+    margin: -8px auto 22px;
+    text-align: center;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.pred-msg {
+    max-width: 760px;
+    margin: 0 auto 18px;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(247,198,0,0.4);
+    background: rgba(247,198,0,0.1);
+    color: var(--text-light);
+    text-align: center;
+}
+
+.pred-msg-error {
+    border-color: rgba(255,99,99,0.6);
+    background: rgba(255,99,99,0.12);
+}
+
+.pred-controls,
+.pred-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+}
+
+.pred-controls {
+    justify-content: center;
+}
+
+.pred-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 0 1 180px;
+}
+
+.pred-grow { flex: 1 1 220px; }
+.pred-narrow { flex: 0 1 110px; }
+
+.pred-field label {
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+}
+
+.pred-field input,
+.pred-field select,
+.pred-cell-input {
+    width: 100%;
+    padding: 9px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.pred-field input[type="date"],
+.pred-field input[type="time"] {
+    color-scheme: dark;
+}
+
+.pred-field input:focus,
+.pred-field select:focus,
+.pred-cell-input:focus {
+    outline: none;
+    border-color: rgba(247,198,0,0.6);
+    box-shadow: 0 0 6px rgba(247,198,0,0.4);
+}
+
+.pred-form .submit-btn {
+    padding: 9px 16px;
+}
+
+.pred-panel {
+    margin-bottom: 30px;
+    padding: 14px 20px;
+    border: 1px dashed rgba(247,198,0,0.35);
+    border-radius: var(--radius-lg);
+    background: rgba(255,255,255,0.03);
+}
+
+.pred-panel summary {
+    cursor: pointer;
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.pred-panel[open] summary {
+    margin-bottom: 14px;
+}
+
+.pred-help {
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+.pred-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 26px 0 36px;
+}
+
+.pred-race-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.pred-race-title {
+    margin-bottom: 2px;
+}
+
+.pred-race-sub {
+    color: var(--text-muted);
+}
+
+.pred-danger {
+    background: transparent;
+    color: #ff8a8a;
+    border: 1px solid rgba(255,138,138,0.5);
+    padding: 7px 12px;
+}
+
+.pred-summary {
+    color: var(--text-light);
+    margin-bottom: 14px;
+}
+
+.pred-warn {
+    color: #ffb347;
+}
+
+.pred-small {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.pred-block {
+    display: block;
+    margin-top: 4px;
+}
+
+.pred-table-wrap {
+    overflow-x: auto;
+    margin-bottom: 16px;
+}
+
+.pred-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.pred-table th {
+    text-align: left;
+    color: var(--gold);
+    font-weight: 600;
+    padding: 8px 6px;
+    border-bottom: 1px solid rgba(247,198,0,0.35);
+    white-space: nowrap;
+}
+
+.pred-table td {
+    padding: 6px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: middle;
+}
+
+.pred-table tr.pred-fav td {
+    background: rgba(247,198,0,0.08);
+}
+
+.pred-horse {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pred-cell-input {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+}
+
+.pred-w-form { width: 70px; }
+.pred-w-name { min-width: 120px; }
+.pred-w-odds { width: 70px; }
+
+.pred-num {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.pred-chance {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.pred-combo {
+    white-space: nowrap;
+}
+
+.pred-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: #000;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.pred-x {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    font-size: 0.9rem;
+}
+
+.pred-x:hover {
+    color: #ff8a8a;
+}
+
+.pred-empty-row {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 16px 6px;
+}
+
+.pred-runner-form {
+    padding-top: 6px;
+}
+
+@media (max-width: 600px) {
+    .pred-field,
+    .pred-grow,
+    .pred-narrow {
+        flex: 1 1 100%;
+    }
+
+    .performance-center-box {
+        padding: 16px;
     }
 }
 

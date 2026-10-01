@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean, DateTime, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSON
 from app.database import Base
@@ -140,3 +140,59 @@ class CompletedRaceDayBet(Base):
     # Money
     stake = Column(Float)
     winnings = Column(Float)
+
+
+# ------------------------------------
+# PREDICTOR: RACES + RUNNERS
+# ------------------------------------
+class PredictorRace(Base):
+    __tablename__ = "predictor_races"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    race_date = Column(Date, nullable=False, index=True)
+    course = Column(String, nullable=False)
+    race_time = Column(String, nullable=False)      # "14:05"
+    name = Column(String, nullable=True)
+    distance = Column(String, nullable=True)
+
+    # Relationship
+    runners = relationship(
+        "PredictorRunner",
+        back_populates="race",
+        cascade="all, delete-orphan",
+        order_by="PredictorRunner.id"
+    )
+
+
+class PredictorRunner(Base):
+    __tablename__ = "predictor_runners"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    race_id = Column(Integer, ForeignKey("predictor_races.id"), nullable=False, index=True)
+    race = relationship("PredictorRace", back_populates="runners")
+
+    horse_name = Column(String, nullable=False)
+    form = Column(String, nullable=True)
+    jockey = Column(String, nullable=True)
+    trainer = Column(String, nullable=True)
+    sky_odds = Column(String, nullable=True)        # stored as a fraction, e.g. "5/2"
+
+
+# ------------------------------------
+# PREDICTOR: JOCKEY / TRAINER / COMBO WIN RECORDS
+# ------------------------------------
+class ConnectionStat(Base):
+    __tablename__ = "connection_stats"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    # "j:name", "t:name" or "c:jockey|trainer" (see services/predictor.stat_key)
+    key = Column(String, unique=True, nullable=False, index=True)
+    kind = Column(String, nullable=False)           # jockey / trainer / combo
+    jockey = Column(String, nullable=True)
+    trainer = Column(String, nullable=True)
+
+    runs = Column(Integer, nullable=False, default=0)
+    wins = Column(Integer, nullable=False, default=0)
