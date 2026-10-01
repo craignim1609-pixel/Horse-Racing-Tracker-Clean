@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Welcome to Elite Racing Group</h1>
+<p style="color:red; font-weight:bold;">Elite Racing Group V1.0</p>
+
+<div class="home-container">
+    <p></p>
+</div>
+
+<!-- Quick Start Tile -->
+<div style="
+    max-width: 520px;
+    margin: 20px auto;
+    border-radius: 8px;
+    border: 1px solid #D4AF37;
+    background: #FAF7F0;
+    font-family: Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+">
+    <!-- Header bar -->
+    <div style="
+        background: #004225;
+        color: #D4AF37;
+        padding: 10px 16px;
+        border-radius: 8px 8px 0 0;
+        font-weight: bold;
+        font-size: 16px;
+    ">
+        Quick Start
+    </div>
+
+    <!-- Body -->
+    <div style="padding: 14px 16px; color: #222; font-size: 14px; line-height: 1.5;">
+
+        <!-- ACCA Section -->
+        <h3 style="margin: 0 0 6px 0; color: #004225; font-size: 15px;">ACCA</h3>
+        <ul style="margin: 0 0 14px 18px; padding: 0;">
+            <li><strong>Add a selection to the Acca:</strong> Use <em>New Pick</em> to add legs to the accumulator.</li>
+            <li><strong>Update the Acca:</strong> As results come in, use the buttons on the <em>Accumulator</em> page to mark each leg.</li>
+            <li><strong>Complete the Acca:</strong> When all legs are settled, press <em>Complete Acca</em> to save it to history.</li>
+        </ul>
+
+        <!-- Race Day Section -->
+        <h3 style="margin: 0 0 6px 0; color: #004225; font-size: 15px;">Race Day</h3>
+        <ul style="margin: 0 0 8px 18px; padding: 0;">
+            <li><strong>Add your daily selections:</strong> Use the <em>Enter Race Day Bet</em> section to enter as many picks as you like.</li>
+            <li><strong>Track the day:</strong> Update each pick’s result on the <em>Race Day</em> page as races finish.</li>
+            <li><strong>Complete the day:</strong> When all races are done, press <em>Complete Day</em> to lock in the results.</li>
+        </ul>
+
+        <p style="margin: 8px 0 0 0; font-size: 13px; color: #444;">
+            Tip: Export your PDF or Excel reports at the end of each day to keep a clean record of your performance.
+        </p>
+    </div>
+</div>
+
+
+{% endblock %}

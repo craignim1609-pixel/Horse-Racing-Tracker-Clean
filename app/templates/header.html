@@ -1,0 +1,16 @@
+<header class="main-header">
+
+    <div class="header-left">
+        <h1 class="site-title">Elite Racing Group</h1>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="/" class="{% if active == 'home' %}active{% endif %}">Home</a>
+        <a href="/acca" class="{% if active == 'accumulator' %}active{% endif %}">Accumulator</a>
+        <a href="/raceday" class="{% if active == 'raceday' %}active{% endif %}">Race Day</a>
+        <a href="/add-pick" class="{% if active == 'newpick' %}active{% endif %}">New Pick</a>
+        <a href="/stats" class="{% if active == 'stats' %}active{% endif %}">Stats</a>
+    </nav>
+
+
+</header>
