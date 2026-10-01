@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="filter-bar">
+    <button class="filter-btn" onclick="window.location='/raceday'">Race Day</button>
+    <button class="filter-btn active">Accumulator</button>
+</div>
+
+<h1>Current Picks & Accumulator</h1>
+
+<div class="race-container">
+
+    <div class="left-panel">
+        <h2>Acca Status</h2>
+        <div class="player-profile">
+            <div class="header-stat">
+                <label>Status</label>
+                <div id="accaStatus" class="header-status status-empty">No Picks</div>
+            </div>
+
+            <div class="header-stat">
+                <label>Shared Acca Odds</label>
+                <span class="stat-value" id="accaOdds">0.00/1</span>
+            </div>
+
+            <div class="header-stat">
+                <label>£2.50 E/W Returns</label>
+                <span class="stat-value" id="accaReturns">£0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <h2>Current Picks</h2>
+        <div id="picksGrid" class="race-list"></div>
+    </div>
+
+</div>
+
+<script src="/static/app_v10001.js"></script>
+
+<script>
+const STATUSES = ["Pending", "Win", "Place", "Lose", "NR"];
+
+async function loadAccumulator() {
+    try {
+        const res = await fetch(`${API}/accumulator`);
+        const data = await res.json();
+
+        const oddsEl = document.getElementById("accaOdds");
+        const returnsEl = document.getElementById("accaReturns");
+        const statusEl = document.getElementById("accaStatus");
+
+        oddsEl.textContent = `${data.odds.toFixed(2)}/1`;
+        returnsEl.textContent = `£${data.ew_returns.toFixed(2)}`;
+
+        statusEl.textContent = data.status;
+        statusEl.className = "header-status";
+
+        if (data.status === "Won") statusEl.classList.add("status-won");
+        else if (data.status === "Live") statusEl.classList.add("status-live");
+        else if (data.status === "Busted") statusEl.classList.add("status-busted");
+        else statusEl.classList.add("status-empty");
+    } catch (e) {
+        console.error("Failed to load accumulator", e);
+    }
+}
+
+function statusBorderClass(status) {
+    if (status === "Win") return "border-win";
+    if (status === "Place") return "border-place";
+    if (status === "Lose") return "border-lose";
+    if (status === "NR") return "border-nr";
+    return "border-pending";
+}
+
+async function loadCurrentPicks() {
+    try {
+        const res = await fetch(`${API}/picks/current`);
+        const picks = await res.json();
+        const container = document.getElementById("picksGrid");
+        container.innerHTML = "";
+
+        if (!picks.length) {
+            container.textContent = "No picks yet.";
+            return;
+        }
+
+        picks.forEach(p => {
+            const card = document.createElement("div");
+            card.className = `race-card ${statusBorderClass(p.status)}`;
+
+            card.innerHTML = `
+                <div class="race-card-header">
+                    <div class="race-card-title">
+                        <span class="player-name">${p.player}</span>
+                    </div>
+                    <button class="delete-btn" onclick="deletePick(${p.id})">✕</button>
+                </div>
+
+                <div class="race-card-body">
+                    <div class="horse-line">
+                        ${p.horse_number ? `<span class="horse-number">(${p.horse_number})</span>` : ""}
+                        <span class="horse-name">${p.horse_name}</span>
+                        <span class="horse-odds">@${p.odds_fraction}</span>
+                    </div>
+                    <div class="race-meta">
+                        <span>${p.course}</span>
+                        <span>${p.race_time}</span>
+                    </div>
+                </div>
+
+                <div class="status-buttons">
+                    ${STATUSES.map(s => `
+                        <button
+                            type="button"
+                            class="status-btn ${p.status === s ? 'active' : ''}"
+                            onclick="updatePickStatus(${p.id}, '${s}')"
+                        >
+                            ${s.toUpperCase()}
+                        </button>
+                    `).join("")}
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+    } catch (e) {
+        console.error("Failed to load picks", e);
+    }
+}
+
+async function updatePickStatus(id, status) {
+    try {
+        await fetch(`${API}/picks/${id}/status`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status })
+        });
+        await loadCurrentPicks();
+        await loadAccumulator();
+    } catch (e) {
+        console.error("Failed to update status", e);
+    }
+}
+
+async function deletePick(id) {
+    if (!confirm("Delete this pick?")) return;
+    try {
+        await fetch(`${API}/picks/${id}`, { method: "DELETE" });
+        await loadCurrentPicks();
+        await loadAccumulator();
+    } catch (e) {
+        console.error("Failed to delete pick", e);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadCurrentPicks();
+    loadAccumulator();
+});
+</script>
+
+{% endblock %}
