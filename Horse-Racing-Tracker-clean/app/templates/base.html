@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title if title else "Elite Racing Group" }}</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="/static/main.css?v=2">
+</head>
+
+<body>
+
+    <!-- GLOBAL HEADER -->
+    {% include 'header.html' %}
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

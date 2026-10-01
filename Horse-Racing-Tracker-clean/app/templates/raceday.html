@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="page-title">Race Day</h1>
+
+<!-- ========================================= -->
+<!-- 1. FULL-WIDTH GROUP SUMMARY TILE          -->
+<!-- ========================================= -->
+
+<div class="performance-center-box">
+
+    <h2 class="section-title" style="margin-top:0;">Group Summary</h2>
+
+    <!-- PERFORMANCE SNAPSHOT -->
+    <div id="gsPerformance" class="monthly-overview-box">
+        <div class="stat-box wins">
+            <div class="stat-label">Wins</div>
+            <div class="stat-value" id="gsWins">0</div>
+        </div>
+
+        <div class="stat-box places">
+            <div class="stat-label">Places</div>
+            <div class="stat-value" id="gsPlaces">0</div>
+        </div>
+
+        <div class="stat-box losses">
+            <div class="stat-label">Losses</div>
+            <div class="stat-value" id="gsLosses">0</div>
+        </div>
+
+        <div class="stat-box nr">
+            <div class="stat-label">NR</div>
+            <div class="stat-value" id="gsNR">0</div>
+        </div>
+    </div>
+
+    <!-- FINANCIAL OVERVIEW -->
+    <div id="gsFinancial" class="monthly-overview-box">
+        <div class="stat-box">
+            <div class="stat-label">Total Stake</div>
+            <div class="stat-value" id="gsStake">£0.00</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-label">Total Returns</div>
+            <div class="stat-value" id="gsReturns">£0.00</div>
+        </div>
+
+        <div class="stat-box" id="gsProfitBox">
+            <div class="stat-label">Profit</div>
+            <div class="stat-value" id="gsProfit">£0.00</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-label">ROI %</div>
+            <div class="stat-value" id="gsROI">0%</div>
+        </div>
+    </div>
+
+    <!-- ACTIVITY SUMMARY -->
+    <div id="gsActivity" class="monthly-overview-box">
+        <div class="stat-box">
+            <div class="stat-label">Total Bets</div>
+            <div class="stat-value" id="gsTotalBets">0</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-label">Strike Rate %</div>
+            <div class="stat-value" id="gsStrikeRate">0%</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-label">Highest Return</div>
+            <div class="stat-value" id="gsHighestReturn">£0.00</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-label">Top Player</div>
+            <div class="stat-value" id="gsTopPlayer">—</div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- 2. CENTERED RACE DAY FORM TILE            -->
+<!-- ========================================= -->
+
+<div class="form-tile" style="max-width: 600px; margin: 0 auto 40px auto;">
+
+    <h2 style="text-align:center; margin-bottom:20px;">Enter Race Day Bet</h2>
+
+    <form id="raceForm" class="race-form">
+
+        <!-- PLAYER -->
+        <div class="form-row">
+            <label for="playerSelect">Player</label>
+            <select id="playerSelect" name="player_id" required></select>
+        </div>
+
+        <!-- COURSE -->
+        <div class="form-row">
+            <label for="courseSelect">Course</label>
+            <input id="courseSelect" name="course" type="text" placeholder="e.g. Ascot" required>
+        </div>
+
+        <!-- HORSE NUMBER + NAME -->
+        <div class="horse-group" style="display:flex; gap:12px;">
+            <div style="flex:0 0 70px;">
+                <label for="horseNumber">#</label>
+                <input id="horseNumber" name="horse_number" placeholder="3" required>
+            </div>
+            <div style="flex:1;">
+                <label for="horseName">Horse Name</label>
+                <input id="horseName" name="horse_name" placeholder="e.g. Frankel" required>
+            </div>
+        </div>
+
+        <!-- RACE TIME -->
+        <div class="form-row">
+            <label for="raceTime">Race Time</label>
+            <input id="raceTime" name="race_time" type="time" required>
+        </div>
+
+        <!-- ODDS -->
+        <div class="form-row">
+            <label for="odds">Odds</label>
+            <input id="odds" name="odds_fraction" placeholder="e.g. 4/1" required>
+        </div>
+
+        <!-- STAKE + EACH WAY -->
+        <div class="form-row" style="display:flex; gap:12px; align-items:flex-end;">
+            <div style="flex:1;">
+                <label for="stake">Stake (£)</label>
+                <input id="stake" name="amount_bet" type="number" step="0.01" placeholder="10.00" required>
+            </div>
+
+            <div style="display:flex; flex-direction:column; align-items:center;">
+                <label style="font-size:0.75rem; opacity:0.7;">E/W</label>
+                <input type="checkbox" id="eachWay" name="each_way" style="transform:scale(1.3);">
+            </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <button type="submit" class="submit-btn" style="margin-top:10px;">
+            Submit Bet Details
+        </button>
+
+    </form>
+
+    <div id="raceResult" class="result-box" style="margin-top:20px;"></div>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- 2.5 COMPLETE DAY BUTTON                   -->
+<!-- ========================================= -->
+
+<button id="completeDayBtn" class="complete-day-btn" style="
+    background:#0f6b3b;
+    color:white;
+    padding:14px 22px;
+    border-radius:8px;
+    border:none;
+    font-size:18px;
+    font-weight:600;
+    cursor:pointer;
+    width:100%;
+    margin:0 auto 30px auto;
+    display:block;
+">
+    Complete Day
+</button>
+
+
+<!-- ========================================= -->
+<!-- 3. TODAY'S BETS — COMPLETED ACCA STYLE    -->
+<!-- ========================================= -->
+
+<h2 class="section-title">Today's Bets</h2>
+
+<div id="raceList" class="acca-picks-grid">
+    <!-- JS will render each bet as a completed-acca style tile -->
+</div>
+
+
+<script src="/static/app_v10002.js"></script>
+<script>
+    setupRaceForm();
+    loadRaceStats();
+</script>
+
+{% endblock %}

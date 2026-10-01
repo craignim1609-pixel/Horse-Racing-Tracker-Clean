@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="page-title">Add New Pick</h1>
+
+<div class="form-tile">
+
+    <form method="post" action="/picks/add">
+
+        <!-- PLAYER -->
+        <div class="form-row">
+            <label>Player</label>
+            <select name="player_id" required>
+                {% for p in players %}
+                    <option value="{{ p.id }}">{{ p.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- COURSE -->
+        <div class="form-row">
+            <label>Course</label>
+            <input type="text" name="course" required>
+        </div>
+
+        <!-- HORSE NAME -->
+        <div class="form-row">
+            <label>Horse Name</label>
+            <input type="text" name="horse_name" required>
+        </div>
+
+        <!-- HORSE NUMBER -->
+        <div class="form-row">
+            <label>Horse Number</label>
+            <input type="number" name="horse_number" min="1" required>
+        </div>
+
+        <!-- ODDS -->
+        <div class="form-row">
+            <label>Odds (Fractional)</label>
+            <input type="text" name="odds_fraction" placeholder="e.g. 5/1" required>
+        </div>
+
+        <!-- RACE TIME -->
+        <div class="form-row">
+            <label>Race Time</label>
+            <input type="time" name="race_time" required>
+        </div>
+
+        <button class="submit-btn" type="submit">Submit Pick</button>
+
+    </form>
+
+</div>
+
+{% endblock %}
